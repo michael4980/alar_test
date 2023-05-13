@@ -34,7 +34,7 @@ async def get_all_data() -> dict:
 
 
 @app.get('/get_name/{id}')
-async def get_info(id:int) -> dict:
+async def get_info(id: int) -> dict:
     """This function returns information from the database for a given id."""
     start_session = CrudDB(session=app.state.sessionmaker())
     result = await start_session.get_data_by_id(id)
@@ -61,7 +61,3 @@ async def get_info_by_range(request: ValidModel) -> dict:
         return Response('Error, incorrect range', status_code=400)
     result = await start_session.get_data_from_range(start, end)
     return {'data': result}
-
-@app.get("/")
-async def root():
-    return {"message": "Tomato"}
