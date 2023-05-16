@@ -44,7 +44,7 @@ async def get_info(id: int) -> dict:
 
 
 @app.get('/get_by_range/')
-async def get_info_by_range(request: ValidModel) -> dict:
+async def get_info_by_range(start: int, end: int) -> dict:
     """This function returns information from the database for a given range 
     of start and end. If the start is greater than or equal to end, 
     an error response is returned.
@@ -56,8 +56,11 @@ async def get_info_by_range(request: ValidModel) -> dict:
         dict : result data 
     """
     start_session = CrudDB(session=app.state.sessionmaker())
-    start, end = request.start, request.end
-    if start >= end:
+    try:
+        params = ValidModel(start=start, end=end)
+    except Exception as ex:
+        return Response('Validation error, make sure the number is greater than 0 and an integer.', status_code=400)
+    if params.start >= params.end:
         return Response('Error, incorrect range', status_code=400)
-    result = await start_session.get_data_from_range(start, end)
+    result = await start_session.get_data_from_range(params.start, params.end)
     return {'data': result}
